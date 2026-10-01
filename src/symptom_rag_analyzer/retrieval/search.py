@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from symptom_rag_analyzer.embeddings.model import BiomedicalEmbeddingModel
 from symptom_rag_analyzer.vector_store.qdrant_store import QdrantVectorStore
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_QDRANT_PATH = PROJECT_ROOT / "data" / "qdrant"
 
 
 @dataclass
@@ -34,7 +39,10 @@ class BiomedicalRetriever:
 			embedding_model if embedding_model is not None else BiomedicalEmbeddingModel()
 		)
 		self.vector_store = (
-			vector_store if vector_store is not None else QdrantVectorStore(vector_size=768)
+			vector_store if vector_store is not None else QdrantVectorStore(
+                                vector_size=768,
+                                path=DEFAULT_QDRANT_PATH,
+                        )
 		)
 
 	def retrieve(self, query: str, top_k: int = 5) -> list[RetrievedEvidence]:
